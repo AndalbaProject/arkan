@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our About Friendship 🕷️</title>
+    <!-- Font Premium Modern -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --red-main: #ff2a2a;
+            --red-glow: rgba(255, 42, 42, 0.6);
+            --red-dark: #8b0000;
+            --bg-dark: #070707;
+            --surface-dark: rgba(18, 18, 18, 0.75);
+            --surface-light: rgba(255, 255, 255, 0.05);
+            --text-main: #ffffff;
+            --text-muted: #b0b0b0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            
+            /* Background dengan beberapa titik cahaya neon merah + Pola jaring laba-laba */
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(255, 42, 42, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(255, 42, 42, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(255, 42, 42, 0.1) 0%, transparent 60%),
+                url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 0 L80 40 L40 80 L0 40 Z M0 0 L80 80 M80 0 L0 80' fill='none' stroke='rgba(255, 42, 42, 0.07)' stroke-width='1'/%3E%3Ccircle cx='40' cy='40' r='20' fill='none' stroke='rgba(255, 42, 42, 0.05)' stroke-width='1'/%3E%3Ccircle cx='40' cy='40' r='35' fill='none' stroke='rgba(255, 42, 42, 0.03)' stroke-width='1'/%3E%3C/svg%3E");
+        }
+
+        /* --- LAPISAN ELEMEN TOPENG MELAYANG --- */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-mask {
+            position: absolute;
+            bottom: -100px;
+            width: 50px;
+            height: 60px;
+            opacity: 0;
+            filter: drop-shadow(0 0 12px rgba(255, 42, 42, 0.4));
+            animation: floatUp 15s infinite linear;
+        }
+
+        /* Variasi ukuran, posisi, dan delay topeng melayang */
+        .mask-1 { left: 10%; width: 40px; animation-duration: 14s; animation-delay: 0s; }
+        .mask-2 { left: 25%; width: 65px; animation-duration: 18s; animation-delay: 3s; opacity: 0.1; }
+        .mask-3 { left: 70%; width: 45px; animation-duration: 16s; animation-delay: 6s; }
+        .mask-4 { left: 85%; width: 55px; animation-duration: 20s; animation-delay: 1s; }
+        .mask-5 { left: 50%; width: 35px; animation-duration: 12s; animation-delay: 9s; }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.25;
+            }
+            90% {
+                opacity: 0.25;
+            }
+            100% {
+                transform: translateY(-110vh) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Container Utama (Layar Aplikasi) */
+        .app-container {
+            width: 100%;
+            max-width: 420px;
+            height: 90vh;
+            max-height: 800px;
+            background: var(--surface-dark);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 42, 42, 0.25);
+            border-radius: 40px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 
+                        inset 0 0 20px rgba(255, 42, 42, 0.05);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            z-index: 10; /* Berada di atas partikel */
+        }
+
+        /* Styling Tiap Halaman (Screen) */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.95) translateY(20px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+
+        .screen.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1) translateY(0);
+            z-index: 10;
+        }
+
+        .screen::-webkit-scrollbar { display: none; }
+
+        h1, h2 {
+            font-weight: 800;
+            text-align: center;
+            background: linear-gradient(135deg, #ffffff, var(--red-main));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: var(--text-muted);
+            text-align: center;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Tombol Premium Modern */
+        .btn-modern {
+            background: linear-gradient(135deg, var(--red-main), var(--red-dark));
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px var(--red-glow);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: auto;
+            margin-bottom: 20px;
+            width: 80%;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(255, 42, 42, 0.8);
+        }
+
+        .btn-back {
+            background: var(--surface-light);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            width: fit-content;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 42, 42, 0.2);
+            border-color: var(--red-main);
+        }
+
+        /* Animasi Ikon Spider Utama */
+        .hero-icon {
+            font-size: 5rem;
+            color: var(--red-main);
+            filter: drop-shadow(0 0 20px var(--red-main));
+            margin-bottom: 20px;
+            animation: breathe 3s infinite alternate ease-in-out;
+            margin-top: 40px;
+        }
+
+        @keyframes breathe {
+            0% { transform: scale(1); filter: drop-shadow(0 0 10px var(--red-main)); }
+            100% { transform: scale(1.1); filter: drop-shadow(0 0 30px var(--red-main)); }
+        }
+
+        /* Grid Menu Bando */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .menu-card {
+            background: var(--surface-light);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at top right, rgba(255,42,42,0.2), transparent);
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: var(--red-main);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255, 42, 42, 0.3);
+        }
+
+        .menu-card:hover::before { opacity: 1; }
+
+        .menu-card i {
+            font-size: 2.5rem;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .menu-card:hover i {
+            color: var(--red-main);
+            text-shadow: 0 0 15px var(--red-main);
+        }
+
+        .menu-card span {
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 1;
+        }
+
+        /* Galeri Polaroid Modern */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .photo-card {
+            background: white;
+            padding: 8px 8px 15px 8px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transform: rotate(var(--rot));
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .photo-card:hover {
+            transform: rotate(0deg) scale(1.15) translateY(-5px);
+            z-index: 20;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 30px var(--red-glow);
+        }
+
+        .photo-card img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .photo-caption {
+            color: #111;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        /* Music Player Premium UI */
+        .player-ui {
+            width: 100%;
+            margin-top: 40px;
+            background: var(--surface-light);
+            border-radius: 30px;
+            padding: 30px 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .vinyl-record {
+            width: 160px;
+            height: 160px;
+            background: linear-gradient(135deg, #111, #333);
+            border-radius: 50%;
+            border: 4px solid #000;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 0 2px rgba(255,42,42,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .vinyl-record::after {
+            content: '';
+            position: absolute;
+            width: 90%; height: 90%;
+            border: 1px dashed rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .vinyl-center {
+            width: 50px; height: 50px;
+            background: var(--red-main);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 2;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .vinyl-record.is-playing {
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .song-info { margin-top: 25px; text-align: center; }
+        .song-title { font-size: 1.2rem; font-weight: 700; color: white; }
+        .song-artist { font-size: 0.85rem; color: var(--red-main); margin-bottom: 20px; }
+
+        /* Notes UI */
+        .notes-container {
+            width: 100%;
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .note-bubble {
+            background: var(--surface-light);
+            border-left: 4px solid var(--red-main);
+            padding: 15px 20px;
+            border-radius: 0 20px 20px 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .note-bubble i { color: var(--red-main); font-size: 1.2rem; margin-top: 2px; }
+
+        /* Surprise Box */
+        .surprise-wrapper {
+            margin-top: auto;
+            margin-bottom: auto;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .surprise-wrapper:hover i {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 0 30px var(--red-main));
+        }
+
+        .surprise-wrapper i {
+            font-size: 6rem;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            transition: 0.3s;
+            animation: shake 2s infinite ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        .final-reveal {
+            display: none;
+            width: 100%;
+            background: rgba(20,20,20,0.9);
+            border: 1px solid rgba(255,42,42,0.4);
+            border-radius: 24px;
+            padding: 25px;
+            margin-top: 20px;
+            animation: slideUpReveal 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            box-shadow: 0 20px 50px rgba(255,42,42,0.15);
+        }
+
+        @keyframes slideUpReveal {
+            from { opacity: 0; transform: translateY(50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .reveal-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border: 2px solid #333;
+        }
+
+        .signature {
+            font-family: 'Times New Roman', cursive;
+            color: var(--red-main);
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 15px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LAPISAN PARTIKEL TOPENG MELAYANG (SVG) -->
+    <div class="bg-particles">
+        <!-- Reusable Mask SVG Item 1 -->
+        <svg class="floating-mask mask-1" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50,10 C20,10 15,50 15,80 C15,105 35,115 50,115 C65,115 85,105 85,80 C85,50 80,10 50,10 Z" fill="#ff2a2a" stroke="#000" stroke-width="4"/>
+            <path d="M25,65 C30,52 43,52 46,70 C40,73 30,73 25,65 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+            <path d="M75,65 C70,52 57,52 54,70 C60,73 70,73 75,65 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+        </svg>
+        <!-- Mask Item 2 -->
+        <svg class="floating-mask mask-2" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50,10 C20,10 15,50 15,80 C15,105 35,115 50,115 C65,115 85,105 85,80 C85,50 80,10 50,10 Z" fill="#ff2a2a" stroke="#000" stroke-width="4"/>
+            <path d="M25,65 C30,52 43,52 46,70 C40,73 30,73 25,65 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+            <path d="M75,65 C70,52 57,52 54,70 C60,73 70,73 75,65 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+        </svg>
+        <!-- Mask Item 3 -->
+        <svg class="floating-mask mask-3" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50,10 C20,10 15,50 15,80 C15,105 35,115 50,115 C65,115 85,105 85,80 C85,50 80,10 50,10 Z" fill="#ff2a2a" stroke="#000" stroke-width="4"/>
+            <path d="M25,65 C30,52 43,52 46,70 C40,73 30,73 25,65 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+            <path d="M75,65 C70,52 57,52 54,70 C60,73 70,73 75,65 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+        </svg>
+        <!-- Mask Item 4 -->
+        <svg class="floating-mask mask-4" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50,10 C20,10 15,50 15,80 C15,105 35,115 50,115 C65,115 85,105 85,80 C85,50 80,10 50,10 Z" fill="#ff2a2a" stroke="#000" stroke-width="4"/>
+            <path d="M25,65 C30,52 43,52 46,70 C40,73 30,73 25,65 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+            <path d="M75,65 C70,52 57,52 54,70 C60,73 70,73 75,65 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+        </svg>
+        <!-- Mask Item 5 -->
+        <svg class="floating-mask mask-5" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50,10 C20,10 15,50 15,80 C15,105 35,115 50,115 C65,115 85,105 85,80 C85,50 80,10 50,10 Z" fill="#ff2a2a" stroke="#000" stroke-width="4"/>
+            <path d="M25,65 C30,52 43,52 46,70 C40,73 30,73 25,65 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+            <path d="M75,65 C70,52 57,52 54,70 C60,73 70,73 75,65 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+        </svg>
+    </div>
+
+    <!-- Audio BGM -->
+    <audio id="bgMusic" loop>
+        <source src="Kasih Putih.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- CONTAINER APLIKASI UTAMA -->
+    <div class="app-container">
+
+        <!-- 1. Screen Landing -->
+        <div id="screen-1" class="screen active" style="justify-content: center;">
+            <i class="fa-solid fa-spider hero-icon"></i>
+            <h1>Happy birthday, arkan!</h1>
+            <p style="margin-top: 10px; margin-bottom: 50px;">Satu hari untuk merayakan umurmu, sejuta alasan untuk bersyukur karena mengenalmu :D</p>
+            
+            <button class="btn-modern" onclick="goScreen('screen-2')">
+                Mulai Misi <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- 2. Screen Menu -->
+        <div id="screen-2" class="screen">
+            <h2>Pilih Sektor Misi</h2>
+            <p>Akses arsip memori persahabatan kita.</p>
+
+            <div class="menu-grid">
+                <div class="menu-card" onclick="goScreen('screen-3')">
+                    <i class="fa-solid fa-images"></i>
+                    <span>Galeri Misi</span>
+                </div>
+                <div class="menu-card" onclick="goScreen('screen-4')">
+                    <i class="fa-solid fa-headphones-simple"></i>
+                    <span>Soundtrack</span>
+                </div>
+                <div class="menu-card" onclick="goScreen('screen-5')">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Kekuatan Jaring</span>
+                </div>
+                <div class="menu-card" onclick="goScreen('screen-6')">
+                    <i class="fa-solid fa-gift"></i>
+                    <span>Arsip Rahasia</span>
+                </div>
+            </div>
+
+            <button class="btn-back" onclick="goScreen('screen-1')"><i class="fa-solid fa-angle-left"></i> Kembali</button>
+        </div>
+
+        <!-- 3. Screen Galeri -->
+        <div id="screen-3" class="screen">
+            <h2>One For The Books</h2>
+            <p>Barangkali dunia terlalu terbiasa mengira kedekatan sebagai cinta, hingga lupa bahwa persahabatan pun mampu sedalam itu."Di antara riuh perasaan yang sering di cari manusia, kita menemukan tenang dalam menjadi teman"</p>
+
+            <div class="gallery-grid">
+                <div class="photo-card" style="--rot: -4deg;">
+                    <img src="foto1.jpeg" alt="Momen 1">
+                    <div class="photo-caption">Momen Pertama 📸</div>
+                </div>
+                <div class="photo-card" style="--rot: 5deg;">
+                    <img src="foto4.jpeg" alt="Momen 2">
+                    <div class="photo-caption">Spidey Web-Shooter Pose! 🤟</div>
+                </div>
+                <div class="photo-card" style="--rot: -2deg;">
+                    <img src="foto2.jpeg" alt="Momen 3">
+                    <div class="photo-caption">Momen Absurd 😂</div>
+                </div>
+                <div class="photo-card" style="--rot: 3deg;">
+                    <img src="foto6.jpeg" alt="Momen 4">
+                    <div class="photo-caption">Duo Terkuat di Universe Ini 👑</div>
+                </div>
+            </div>
+
+            <button class="btn-back" onclick="goScreen('screen-2')"><i class="fa-solid fa-angle-left"></i> Menu</button>
+        </div>
+
+        <!-- 4. Screen Musik -->
+        <div id="screen-4" class="screen">
+            <h2>Soundtrack Kita</h2>
+            <p>Lagu yang cocok diputar sambil berayun menembus gedung-gedung kota.</p>
+
+            <div class="player-ui">
+                <div id="vinyl" class="vinyl-record">
+                    <div class="vinyl-center"><i class="fa-solid fa-spider"></i></div>
+                </div>
+                
+                <div class="song-info">
+                    <div class="song-title">Kasih Putih</div>
+                    <div class="song-artist">Yovie Widianto,Glenn Fredly</div>
+                </div>
+
+                <button id="btn-play" class="btn-modern" style="width: auto; padding: 12px 30px; border-radius: 20px;" onclick="togglePlay()">
+                    <i class="fa-solid fa-play"></i> Putar Track
+                </button>
+            </div>
+
+            <button class="btn-back" onclick="goScreen('screen-2')"><i class="fa-solid fa-angle-left"></i> Menu</button>
+        </div>
+
+        <!-- 5. Screen Notes -->
+        <div id="screen-5" class="screen">
+            <h2>Arkan yang Aku Kenal</h2>
+            <p>Sedikit tentang arkan yang selalu aku ingat:</p>
+
+            <div class="notes-container">
+                <div class="note-bubble">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Keras kepala & plin plan banget🫠🫠</span>
+                </div>
+                <div class="note-bubble">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Nyebelin, tapi selalu ada yang kurang kalo gaada arkan</span>
+                </div>
+                <div class="note-bubble">
+                    <i class="fa-solid fa-mask"></i>
+                    <span>Orang nya suka marah marah & bt an bangeets tapi suka mendem juga</span>
+                </div>
+                <div class="note-bubble">
+                    <i class="fa-solid fa-handshake-angle"></i>
+                    <span>Selalu bikin suasana jadi seru & hangat</span>
+                </div>
+            </div>
+
+            <button class="btn-back" onclick="goScreen('screen-2')"><i class="fa-solid fa-angle-left"></i> Menu</button>
+        </div>
+
+        <!-- 6. Screen Final -->
+        <div id="screen-6" class="screen">
+            
+            <div id="surprise-trigger" class="surprise-wrapper" onclick="openSurprise()">
+                <i class="fa-solid fa-box-open"></i>
+                <h2>Ketuk Box Ini!</h2>
+                <p>Dekripsi pesan terakhir...</p>
+            </div>
+
+           <div id="final-message" class="final-reveal">
+    <img src="foto3.jpeg" class="reveal-img" alt="Foto Terbaik">
+    
+    <h3 style="color: var(--red-main); margin-bottom: 15px; text-align: center; font-size: 1.3rem;">
+        Partner In Crime Terbaik! 🕷️
+    </h3>
+    
+    <div style="text-align: justify; font-size: 0.88rem; color: #e0e0e0; line-height: 1.6; display: flex; flex-direction: column; gap: 14px;">
+        <p>
+            <strong>Selamat ulang tahun, Arkan!</strong> 🥳<br>
+            Aku harap di umur kamu yang baru ini, kamu lebih banyak bertemu kebahagiaan daripada kekecewaan, lebih banyak jawaban daripada kebingungan, & lebih banyak hal baik daripada yang kamu bayangkan.
+        </p>
+        
+        <p>
+            Makasih banyak yaa Arkan karena kamu adalah sahabat laki-laki pertama aku sejauh ini. Makasih yaa udah jadi orang baik, makasih udah jadi diri kamu sendiri yang ga ada di orang lain. Mungkin aku ga selalu bilang, tapi aku sangat menghargai hal-hal baik dan semua momen-momen yang mungkin ga akan seru kalau ga ada kamunya.
+        </p>
+        
+        <p>
+            Selamat & sukses yaa di sekolah barunya, <em>in another life</em> kita satu sekolah lagi kok, Ar! Tetap jadi Arkan yang aku kenal yaaaa. Mungkin nanti kita akan sedikit asing karena kamu sibuk, tapi kamu harus tau kalau aku selalu doain kamu biar kamu bahagia & semua urusan kamu dipermudah.
+        </p>
+        
+        <p>
+            Makasih ya Ar untuk selalu isi hari-hari aku sama jokes-jokes kamu. Terimakasih karena jadi alasan aku hidup di dunia sampai saat ini, jujur sepertinya aku akan rindu. Kira-kira nanti siapa ya yang duduk di belakang bangku kamu? 🤔🤔
+        </p>
+        
+        <p>
+            Terlepas apapun yang sudah terjadi, aku seneng banget bisa jadi sahabat kamu Arkan, aku bersyukur sekali bertemu kamu. Maafin kalau aku suka marah-marah & pundung sama kamu yaa. 
+        </p>
+        
+        <p style="color: var(--red-main); font-weight: 700; text-align: center; font-size: 0.95rem; letter-spacing: 0.5px;">
+            AKU GA SABAR LIAT KAMU BOTAAKKK! 😭😂
+        </p>
+        
+        <p>
+            Heheheh jangan lupa makan & istirahat yang cukup ya Arkan, jangan terlalu keras sama diri sendiri. Ini cuman dunia, menang kalah itu ada, tetap jadi orang baik yang suka bercanda ya arkaaan. Marah-marahnya dikurangin juga ya Ar, semoga kamu selalu punya alasan untuk tersenyum setiap hari. 
+        </p>
+        
+        <p style="text-align: center; font-weight: 500; color: #fff; margin-top: 5px;">
+            Selamat ulang tahun sekali lagi. Makasih udah jadi partner yang membanggakan & sangat membantu selama ini. Aku sayang kamu sebagai teman! 💞
+        </p>
+    </div>
+
+    <div class="signature" style="margin-top: 25px; font-weight: 600; color: var(--red-main); text-align: right;">
+        - Sahabat Sejatimu
+    </div>
+</div>
+
+            <button class="btn-back" onclick="goScreen('screen-2')" style="margin-top: auto;"><i class="fa-solid fa-angle-left"></i> Menu</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Navigasi Transisi Halus
+        function goScreen(targetId) {
+            document.querySelectorAll('.screen').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById(targetId).classList.add('active');
+        }
+
+        // Logic Music Player
+        const music = document.getElementById('bgMusic');
+        const vinyl = document.getElementById('vinyl');
+        const btnPlay = document.getElementById('btn-play');
+
+        function togglePlay() {
+            if (music.paused) {
+                music.play().catch(e => alert('Ketuk di mana saja dulu sebelum memutar musik!'));
+                vinyl.classList.add('is-playing');
+                btnPlay.innerHTML = '<i class="fa-solid fa-pause"></i> Pause Track';
+                btnPlay.style.background = 'linear-gradient(135deg, #333, #000)';
+            } else {
+                music.pause();
+                vinyl.classList.remove('is-playing');
+                btnPlay.innerHTML = '<i class="fa-solid fa-play"></i> Putar Track';
+                btnPlay.style.background = 'linear-gradient(135deg, var(--red-main), var(--red-dark))';
+            }
+        }
+
+        // Logic Buka Kotak Kejutan Akhir
+        function openSurprise() {
+            const trigger = document.getElementById('surprise-trigger');
+            const message = document.getElementById('final-message');
+            
+            trigger.style.display = 'none';
+            message.style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
